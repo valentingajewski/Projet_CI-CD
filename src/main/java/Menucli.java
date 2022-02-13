@@ -1,13 +1,13 @@
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
-import picocli.CommandLine.Parameters;
-
 import java.io.File;
 import java.math.BigInteger;
 import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.util.concurrent.Callable;
+
+import picocli.CommandLine;
+import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
+import picocli.CommandLine.Parameters;
 
 @Command(name = "checksum", mixinStandardHelpOptions = true, version = "checksum 4.0",
         description = "Prints the checksum (SHA-256 by default) of a file to STDOUT.")
@@ -33,4 +33,9 @@ class Menucli implements Callable<Integer> {
         int exitCode = new CommandLine(new Menucli()).execute(args);
         System.exit(exitCode);
     }
+
+    Menucli app = new Menucli();
+    CommandLine cmd = new CommandLine(app);
+    // black box testing
+    int exitCode = cmd.execute("-x", "-y=123");
 }
