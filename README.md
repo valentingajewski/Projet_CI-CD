@@ -19,15 +19,18 @@
 ```
 
 ## Test de création de Menu"
+
+# Créer un nouveau menu
 ```bash
-# Créer un nouveau menu avec un plat dedans
 curl -H "Content-Type: application/json" --data-raw '{"name": "Plat principal", "dishes": [{"name": "Ecrasé de pommes de terre"},{"name": "Purée"}]}' localhost:8080/menus
+```
 
-### Get the menus
+### Obtenir la liste des menus
+```bash
+java -cp "{}Chemin vers le jar}/MenuCli-jar-with-dependencies.jar" Menucli --server-url https://tdbm-menu-server.herokuapp.com list-menus
+```
 
-`java -cp "{}Chemin vers le jar}/MenuCli-jar-with-dependencies.jar" Menucli --server-url https://tdbm-menu-server.herokuapp.com list-menus`
-
-### Delete a menu
-
-`java -cp "{}Chemin vers le jar}/MenuCli-jar-with-dependencies.jar" Menucli --server-url https://tdbm-menu-server.herokuapp.com -i {Id du Menu a Delete} delete-menu`
+### Supprimer un menu
+```bash
+java -cp "{}Chemin vers le jar}/MenuCli-jar-with-dependencies.jar" Menucli --server-url https://tdbm-menu-server.herokuapp.com -i {Id du Menu a Delete} delete-menu`
 ```
