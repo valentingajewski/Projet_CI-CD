@@ -1,0 +1,51 @@
+name: CI
+on:
+  - push
+  - pull_request
+jobs:
+  Build:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu' # See 'Supported distributions' for available options
+          java-version: '11.0.13'
+      - run: mvn assembly:single
+      - uses: actions/upload-artifact@v2
+        with:
+          name: menucli
+          path: ./target/MenuCli-jar-with-dependencies.jar
+  release:
+      runs-on: ubuntu-20.04
+      # Lance le job release si build et test se sont terminés normalement.
+      needs: build
+      # Lance le job release uniquement si la branche est main.
+      if: contains('refs/tags/v', github.ref)
+      steps:
+        - uses: actions/download-artifact@v2
+          with:
+            name: menucli
+            path: ./target/MenuCli-jar-with-dependencies.jar
+
+        - name: Create Release
+          id: create_release
+          uses: actions/create-release@v1
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          with:
+            tag_name: ${{ github.ref }}
+            release_name: Release ${{ github.ref }}
+            draft: false
+            prerelease: false
+
+        - name: Upload Release Asset
+          id: upload-release-asset 
+          uses: actions/upload-release-asset@v1
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          with:
+            upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+            asset_path: ./target/MenuCli-jar-with-dependencies.jar
+            asset_name: menucli
+            asset_content_type: application/jar
