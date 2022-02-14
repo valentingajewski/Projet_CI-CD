@@ -13,11 +13,6 @@
 - spring-boot-starter-test
 - maven-failsafe-plugin
 
-## Lancer le projet
-```bash
-./
-```
-
 ## Release
 Télécharger le fichier compressé dans le tag MenuCli
 
