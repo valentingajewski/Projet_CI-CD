@@ -1,7 +1,10 @@
-import java.io.File;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.math.BigInteger;
-import java.nio.file.Files;
-import java.security.MessageDigest;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import picocli.CommandLine;
@@ -10,20 +13,38 @@ import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
 @Command(name = "Menucli", mixinStandardHelpOptions = true, version = "checksum 4.0",
-        description = "Prints the checksum (SHA-256 by default) of a file to STDOUT.")
+        description = "")
 class Menucli implements Callable<Integer> {
 
-    @Parameters(index = "0", description = "The file whose checksum to calculate.")
-    private File file;
+    @Parameters(index = "0", description = "Choose the action to do")
+    private String Action;
 
-    @Option(names = {"-a", "--algorithm"}, description = "MD5, SHA-1, SHA-256, ...")
-    private String algorithm = "SHA-256";
+    @Option(names={"-i"}, description = "id of the menu to delete")
+    private String idMenu;
+
+    @Option(names = {"--server-url"}, description = "Set url API Url")
+    private String ServeurURL= "https://tdbm-menu-server.herokuapp.com";
 
     @Override
     public Integer call() throws Exception { // your business logic goes here...
-        byte[] fileContents = Files.readAllBytes(file.toPath());
-        byte[] digest = MessageDigest.getInstance(algorithm).digest(fileContents);
-        System.out.printf("%0" + (digest.length*2) + "x%n", new BigInteger(1, digest));
+        System.out.println(Action);
+        if (Action.equals("list-menus")) {
+            URL url = new URL(ServeurURL+"/menus");
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setDoOutput(true);
+            try (BufferedReader reader = new BufferedReader(
+                            new InputStreamReader(con.getInputStream()))) {
+                    for (String line; (line = reader.readLine()) != null; ) {
+                        System.out.println(line);
+                    }
+                }
+        } else if (Action.equals("delete-menu")){
+            URL url = new URL(ServeurURL+"/menus/"+idMenu);
+            HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
+            httpCon.setRequestMethod("DELETE");
+            httpCon.connect();
+            httpCon.getInputStream();
+        }
         return 0;
     }
 
