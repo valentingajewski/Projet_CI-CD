@@ -18,6 +18,9 @@
 ./
 ```
 
+## Release
+Télécharger le fichier compressé dans le tag MenuCli
+
 ## Test de création de Menu"
 
 # Créer un nouveau menu
