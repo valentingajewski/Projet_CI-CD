@@ -27,18 +27,24 @@ class Menucli implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception { // your business logic goes here...
-        System.out.println(Action);
         if (Action.equals("list-menus")) {
+            System.out.println("Listing menus :");
             URL url = new URL(ServeurURL+"/menus");
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setDoOutput(true);
             try (BufferedReader reader = new BufferedReader(
                             new InputStreamReader(con.getInputStream()))) {
                     for (String line; (line = reader.readLine()) != null; ) {
-                        System.out.println(line);
+                        for (int j = 0; j<line.split("]").length-1; j++){
+                            System.out.println("id = " + line.split("]")[j].split(":")[1].split(",")[0] + " (" + line.split("]")[j].split("\"")[5] + ") :");
+                            for (int i = 0; i<line.split("]")[j].split("id").length-2; i++) {
+                                System.out.println("- " + line.split("]")[j].split("id")[i+2].split("\"")[4]);
+                            }
+                        }   
                     }
                 }
         } else if (Action.equals("delete-menu")){
+            System.out.println("Menu "+ idMenu + " deleted");
             URL url = new URL(ServeurURL+"/menus/"+idMenu);
             HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
             httpCon.setRequestMethod("DELETE");
